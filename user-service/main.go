@@ -1,32 +1,22 @@
 package main
 
 import (
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-
-	"github.com/essaubaid/ride-hailing/user-service/server"
+	"github.com/essaubaid/ride-hailing/common/server"
+	"github.com/essaubaid/ride-hailing/proto/user"
+	"github.com/essaubaid/ride-hailing/user-service/handlers"
+	"github.com/essaubaid/ride-hailing/user-service/services"
 )
 
 func main() {
-	grpcServer, listener := server.NewGRPCServer()
+	grpcConfig := server.GRPCServerConfig{Port: "8090"}
+	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	handler := handlers.NewUserHandler()
+	UserService := services.NewUserService(*handler)
 
-	go func() {
-		log.Println("Starting server on port 8090")
-		if err := grpcServer.Serve(listener); err != nil {
-			log.Fatalf("Could not start server %s", err)
-		}
-	}()
+	// Register the user service with the gRPC server
+	user.RegisterUserServiceServer(grpcServer, UserService)
 
-	<-stop
-
-	log.Println("Shutting down server")
-	grpcServer.GracefulStop()
-	listener.Close()
-
-	log.Println("Server stopped")
+	// Run the server with graceful shutdown.
+	server.RunGRPCServer(grpcServer, listener, "UserService")
 }
