@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "proto/rides/rides.proto";
+
+option go_package = "github.com/essaubaid/ride-hailing/proto/booking";
+
+service BookingService {
+  rpc GetBooking (GetBookingRequest) returns (GetBookingResponse);
+  rpc CreateBooking (CreateBookingRequest) returns (CreateBookingResponse);
+}
+
+message BookingDetails {
+  int32 user_id = 1;
+  int32 ride_id = 2;
+  google.protobuf.Timestamp time = 3;
+}
+
+message GetBookingRequest {
+  int32 id = 1;
+}
+
+message GetBookingResponse {
+  string name = 1;
+  string source = 2;
+  string destination = 3;
+  int32 distance = 4;
+  int32 cost = 5;
+  google.protobuf.Timestamp time = 6;
+}
+
+message CreateBookingRequest {
+  int32 user_id = 1;
+  RideDetails ride = 2;
+}
+
+message CreateBookingResponse {
+  BookingDetails booking = 1;
+}

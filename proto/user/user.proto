@@ -3,14 +3,31 @@ syntax = "proto3";
 option go_package = "github.com/essaubaid/ride-hailing/proto/user";
 
 service UserService {
-  rpc GetUser (UserRequest) returns (UserResponse);
+  rpc GetUser (GetUserRequest) returns (GetUserResponse);
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
 }
 
-message UserRequest {
-  string id = 1;
+message GetUserRequest {
+  int32 id = 1;
 }
 
-message UserResponse {
+message GetUserResponse {
   string name = 1;
-  string email = 2;
+}
+
+message CreateUserRequest {
+  string name = 1;
+}
+
+message CreateUserResponse {
+  int32 id = 1;
+}
+
+message DeleteUserRequest {
+  int32 id = 1;
+}
+
+message DeleteUserResponse {
+  string message = 1;
 }
