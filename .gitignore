@@ -1,0 +1,4 @@
+# Ignore Go build artifacts
+*.exe
+*.test
+*.out
