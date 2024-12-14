@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "github.com/essaubaid/ride-hailing/proto/rides";
+
+service RidesService {
+  rpc UpdateRide (UpdateRideRequest) returns (UpdateRideResponse);
+}
+
+message RideDetails {
+    string source = 1;
+    string destination = 2;
+    int32 distance = 3;
+    int32 cost = 4;
+}
+
+message UpdateRideRequest {
+    int32 id = 1;
+    RideDetails ride = 2;
+}
+
+message UpdateRideResponse {
+    string message = 1;
+}

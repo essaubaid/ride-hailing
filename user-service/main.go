@@ -1,36 +1,22 @@
 package main
 
 import (
-	"context"
-	"log"
-	"net"
-
+	"github.com/essaubaid/ride-hailing/common/server"
 	"github.com/essaubaid/ride-hailing/proto/user"
-	"google.golang.org/grpc"
+	"github.com/essaubaid/ride-hailing/user-service/handlers"
+	"github.com/essaubaid/ride-hailing/user-service/services"
 )
 
-type myUserServiceServer struct {
-	user.UnimplementedUserServiceServer
-}
-
-func (server myUserServiceServer) GetUser(ctx context.Context, req *user.UserRequest) (*user.UserResponse, error) {
-	log.Printf("Received request for user ID: %v", req.Id)
-
-	return &user.UserResponse{Name: "John Doe", Email: "john@example.com"}, nil
-}
-
 func main() {
-	listener, err := net.Listen("tcp", ":8091")
-	if err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
+	grpcConfig := server.GRPCServerConfig{Port: "8090"}
+	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
-	serverRegistrar := grpc.NewServer()
-	service := &myUserServiceServer{}
+	handler := handlers.NewUserHandler()
+	UserService := services.NewUserService(*handler)
 
-	user.RegisterUserServiceServer(serverRegistrar, service)
+	// Register the user service with the gRPC server
+	user.RegisterUserServiceServer(grpcServer, UserService)
 
-	if err := serverRegistrar.Serve(listener); err != nil {
-		log.Fatalf("Could not start server %s", err)
-	}
+	// Run the server with graceful shutdown.
+	server.RunGRPCServer(grpcServer, listener, "UserService")
 }
