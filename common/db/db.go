@@ -3,9 +3,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
+	"github.com/essaubaid/ride-hailing/common/logging"
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
@@ -16,6 +16,8 @@ type Config struct {
 	Password string
 	DbName   string
 }
+
+var logger = logging.GetLogger()
 
 func NewDatabase(cfg Config) (*sql.DB, error) {
 	//Build connection string
@@ -38,7 +40,7 @@ func NewDatabase(cfg Config) (*sql.DB, error) {
 		return nil, err
 	}
 
-	log.Printf("Connected to database %s on %s:%d", cfg.DbName, cfg.Host, cfg.Port)
+	logger.Infof("Connected to database %s on %s:%d", cfg.DbName, cfg.Host, cfg.Port)
 	return db, nil
 
 }

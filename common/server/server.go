@@ -1,14 +1,16 @@
 package server
 
 import (
-	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/essaubaid/ride-hailing/common/logging"
 	"google.golang.org/grpc"
 )
+
+var logger = logging.GetLogger()
 
 type GRPCServerConfig struct {
 	Port string
@@ -18,7 +20,7 @@ func NewGRPCServer(config *GRPCServerConfig) (*grpc.Server, net.Listener) {
 	// Create a new listener on the specified port
 	listener, err := net.Listen("tcp", ":"+config.Port)
 	if err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		logger.Fatalf("Failed to start server: %v", err)
 	}
 
 	// Create a new gRPC server
@@ -33,15 +35,15 @@ func RunGRPCServer(grpcServer *grpc.Server, listener net.Listener, serviceName s
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		log.Printf("Starting %s on port %s", serviceName, listener.Addr().String())
+		logger.Infof("Starting %s on port %s", serviceName, listener.Addr().String())
 		if err := grpcServer.Serve(listener); err != nil {
-			log.Fatalf("Failed to serve %s: %v", serviceName, err)
+			logger.Fatalf("Failed to serve %s: %v", serviceName, err)
 		}
 	}()
 
 	// Wait for shutdown signal.
 	<-stop
-	log.Printf("Stopping %s...", serviceName)
+	logger.Infof("Stopping %s...", serviceName)
 	grpcServer.GracefulStop()
-	log.Printf("%s stopped", serviceName)
+	logger.Infof("%s stopped", serviceName)
 }
