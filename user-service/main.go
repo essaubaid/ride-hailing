@@ -39,7 +39,7 @@ func main() {
 	userRepository := repositories.NewUserRepository(db)
 
 	// Create a new gRPC server
-	grpcConfig := server.GRPCServerConfig{Port: "8090"}
+	grpcConfig := server.GRPCServerConfig{Port: os.Getenv("SERVICE_PORT")}
 	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
 	handler := handlers.NewUserHandler(userRepository)

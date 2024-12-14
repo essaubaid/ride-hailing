@@ -39,8 +39,7 @@ func main() {
 	defer db.Close()
 
 	// Connect to RideService.
-	rideConn, err := grpc.NewClient("localhost:8092", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	// rideConn, err := grpc.Dial("localhost:8091", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	rideConn, err := grpc.NewClient("ride_service:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to RideService: %v", err)
 	}
@@ -51,7 +50,7 @@ func main() {
 	bookingRepository := repositories.NewBookingRepository(db)
 
 	// Create a new gRPC server
-	grpcConfig := server.GRPCServerConfig{Port: "8090"}
+	grpcConfig := server.GRPCServerConfig{Port: os.Getenv("SERVICE_PORT")}
 	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
 	bookingHandler := handlers.NewBookingHandler(bookingRepository, &rideClient)
