@@ -57,6 +57,6 @@ func (s *RidesService) CreateRide(ctx context.Context, req *rides.CreateRideRequ
 	}
 
 	return &rides.CreateRideResponse{
-		Message: "Ride created successfully",
+		Id: ride.Id,
 	}, nil
 }

@@ -27,12 +27,12 @@ func (r *RidesRepository) UpdateRideById(id int32, ride *models.Ride) error {
 }
 
 func (r *RidesRepository) CreateRide(ride *models.Ride) error {
-	_, err := r.db.Exec("INSERT INTO rides (source, destination, distance, cost) VALUES ($1, $2, $3, $4)",
+	err := r.db.QueryRow("INSERT INTO rides (source, destination, distance, cost) VALUES ($1, $2, $3, $4) RETURNING id",
 		ride.Source,
 		ride.Destination,
 		ride.Distance,
 		ride.Cost,
-	)
+	).Scan(&ride.Id)
 
 	return err
 }
