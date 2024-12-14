@@ -1,29 +1,28 @@
 package handlers
 
-import "context"
+import (
+	"context"
 
-type Ride struct {
-	Id          int32
-	Source      string
-	Destination string
-	Distance    int32
-	Cost        int32
-}
+	"github.com/essaubaid/ride-hailing/booking-service/repositories"
+	"github.com/essaubaid/ride-hailing/common/models"
+)
 
 type RidesHandler struct {
+	repo *repositories.RidesRepository
 }
 
-func NewRidesHandler() *RidesHandler {
-	return &RidesHandler{}
+func NewRidesHandler(repo *repositories.RidesRepository) *RidesHandler {
+	return &RidesHandler{
+		repo: repo,
+	}
 }
 
-func (h *RidesHandler) UpdateRide(ctx context.Context, ride Ride) (*Ride, error) {
+func (h *RidesHandler) UpdateRide(ctx context.Context, ride *models.Ride) (*models.Ride, error) {
 
-	return &Ride{
-		Id:          ride.Id,
-		Source:      ride.Source,
-		Destination: ride.Destination,
-		Distance:    ride.Distance,
-		Cost:        ride.Cost,
-	}, nil
+	err := h.repo.UpdateRideById(ride.Id, ride)
+	if err != nil {
+		return nil, err
+	}
+
+	return ride, nil
 }

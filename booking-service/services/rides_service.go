@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/essaubaid/ride-hailing/booking-service/handlers"
+	"github.com/essaubaid/ride-hailing/common/models"
 	"github.com/essaubaid/ride-hailing/proto/rides"
 )
 
@@ -22,7 +23,7 @@ func NewRidesService(handler handlers.RidesHandler) *RidesService {
 func (s *RidesService) UpdateRide(ctx context.Context, req *rides.UpdateRideRequest) (*rides.UpdateRideResponse, error) {
 	log.Printf("gRPC: Received UpdateRide request for ID: %d", req.Id)
 
-	ride := handlers.Ride{
+	ride := models.Ride{
 		Id:          req.Id,
 		Source:      req.Ride.Source,
 		Destination: req.Ride.Destination,
@@ -30,7 +31,7 @@ func (s *RidesService) UpdateRide(ctx context.Context, req *rides.UpdateRideRequ
 		Cost:        req.Ride.Cost,
 	}
 
-	_, err := s.handler.UpdateRide(ctx, ride)
+	_, err := s.handler.UpdateRide(ctx, &ride)
 	if err != nil {
 		return nil, err
 	}
