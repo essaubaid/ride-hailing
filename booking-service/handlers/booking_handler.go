@@ -4,27 +4,27 @@ import (
 	"context"
 	"time"
 
+	"github.com/essaubaid/ride-hailing/booking-service/repositories"
 	"github.com/essaubaid/ride-hailing/common/models"
+	"github.com/essaubaid/ride-hailing/proto/rides"
 )
 
-type Booking struct {
-	Id     int32
-	UserId int32
-	RideId int32
-	Time   time.Time
-}
-
 type BookingHandler struct {
+	repo       *repositories.BookingRepository
+	rideClient *rides.RidesServiceClient
 }
 
-func NewBookingHandler() *BookingHandler {
-	return &BookingHandler{}
+func NewBookingHandler(repo *repositories.BookingRepository, rideClient *rides.RidesServiceClient) *BookingHandler {
+	return &BookingHandler{
+		repo:       repo,
+		rideClient: rideClient,
+	}
 }
 
-func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*Booking, *models.Ride, error) {
+func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*models.Booking, *models.Ride, error) {
 
-	return &Booking{
-			Id:     bookingId,
+	return &models.Booking{
+			Id:     1,
 			UserId: 1,
 			RideId: 1,
 			Time:   time.Now(),
@@ -37,12 +37,32 @@ func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*Book
 		}, nil
 }
 
-func (h *BookingHandler) CreateBooking(ctx context.Context, userId int32, ride models.Ride) (*Booking, error) {
+func (h *BookingHandler) CreateBooking(ctx context.Context, userId int32, ride models.Ride) (*models.Booking, error) {
 
-	return &Booking{
-		Id:     1,
+	rideReq := &rides.CreateRideRequest{
+		Ride: &rides.RideDetails{
+			Source:      ride.Source,
+			Destination: ride.Destination,
+			Distance:    ride.Distance,
+			Cost:        ride.Cost,
+		},
+	}
+
+	rideResp, err := (*h.rideClient).CreateRide(ctx, rideReq)
+	if err != nil {
+		return nil, err
+	}
+
+	booking := &models.Booking{
 		UserId: userId,
-		RideId: 1,
+		RideId: rideResp.Id,
 		Time:   time.Now(),
-	}, nil
+	}
+
+	err = h.repo.CreateBooking(booking)
+	if err != nil {
+		return nil, err
+	}
+
+	return booking, nil
 }

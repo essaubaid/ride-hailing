@@ -12,6 +12,8 @@ import (
 	"github.com/essaubaid/ride-hailing/proto/booking"
 	"github.com/essaubaid/ride-hailing/proto/rides"
 	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -36,20 +38,25 @@ func main() {
 	}
 	defer db.Close()
 
+	// Connect to RideService.
+	rideConn, err := grpc.NewClient("localhost:8092", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// rideConn, err := grpc.Dial("localhost:8091", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Failed to connect to RideService: %v", err)
+	}
+	defer rideConn.Close()
+	rideClient := rides.NewRidesServiceClient(rideConn)
+
 	//Initialize the repositories
-	ridesRepository := repositories.NewRidesRepository(db)
+	bookingRepository := repositories.NewBookingRepository(db)
 
 	// Create a new gRPC server
-	grpcConfig := server.GRPCServerConfig{Port: "8092"}
+	grpcConfig := server.GRPCServerConfig{Port: "8090"}
 	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
-	ridesHandler := handlers.NewRidesHandler(ridesRepository)
-	ridesService := services.NewRidesService(*ridesHandler)
-	bookingHandler := handlers.NewBookingHandler()
+	bookingHandler := handlers.NewBookingHandler(bookingRepository, &rideClient)
 	bookingService := services.NewBookingService(*bookingHandler)
 
-	// Register the rides service with the gRPC server
-	rides.RegisterRidesServiceServer(grpcServer, ridesService)
 	// Register the booking service with the gRPC server
 	booking.RegisterBookingServiceServer(grpcServer, bookingService)
 
