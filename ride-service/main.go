@@ -39,7 +39,7 @@ func main() {
 	ridesRepository := repositories.NewRidesRepository(db)
 
 	// Create a new gRPC server
-	grpcConfig := server.GRPCServerConfig{Port: "8092"}
+	grpcConfig := server.GRPCServerConfig{Port: os.Getenv("SERVICE_PORT")}
 	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
 	ridesHandler := handlers.NewRidesHandler(ridesRepository)
