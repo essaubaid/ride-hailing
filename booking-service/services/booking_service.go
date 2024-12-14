@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/essaubaid/ride-hailing/booking-service/handlers"
+	"github.com/essaubaid/ride-hailing/common/models"
 	"github.com/essaubaid/ride-hailing/proto/booking"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -41,7 +42,7 @@ func (s *BookingService) GetBooking(ctx context.Context, req *booking.GetBooking
 func (s *BookingService) CreateBooking(ctx context.Context, req *booking.CreateBookingRequest) (*booking.CreateBookingResponse, error) {
 	log.Printf("gRPC: Received CreateBooking request for User ID: %d", req.UserId)
 
-	ride := handlers.Ride{
+	ride := models.Ride{
 		Source:      req.Ride.Source,
 		Destination: req.Ride.Destination,
 		Distance:    req.Ride.Distance,

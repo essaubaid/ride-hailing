@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 	"time"
+
+	"github.com/essaubaid/ride-hailing/common/models"
 )
 
 type Booking struct {
@@ -19,14 +21,14 @@ func NewBookingHandler() *BookingHandler {
 	return &BookingHandler{}
 }
 
-func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*Booking, *Ride, error) {
+func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*Booking, *models.Ride, error) {
 
 	return &Booking{
 			Id:     bookingId,
 			UserId: 1,
 			RideId: 1,
 			Time:   time.Now(),
-		}, &Ride{
+		}, &models.Ride{
 			Id:          1,
 			Source:      "Source",
 			Destination: "Destination",
@@ -35,7 +37,7 @@ func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*Book
 		}, nil
 }
 
-func (h *BookingHandler) CreateBooking(ctx context.Context, userId int32, ride Ride) (*Booking, error) {
+func (h *BookingHandler) CreateBooking(ctx context.Context, userId int32, ride models.Ride) (*Booking, error) {
 
 	return &Booking{
 		Id:     1,
