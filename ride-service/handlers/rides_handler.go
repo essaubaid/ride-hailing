@@ -3,8 +3,8 @@ package handlers
 import (
 	"context"
 
-	"github.com/essaubaid/ride-hailing/booking-service/repositories"
 	"github.com/essaubaid/ride-hailing/common/models"
+	"github.com/essaubaid/ride-hailing/ride-service/repositories"
 )
 
 type RidesHandler struct {

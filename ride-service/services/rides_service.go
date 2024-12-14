@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"github.com/essaubaid/ride-hailing/booking-service/handlers"
 	"github.com/essaubaid/ride-hailing/common/models"
 	"github.com/essaubaid/ride-hailing/proto/rides"
+	"github.com/essaubaid/ride-hailing/ride-service/handlers"
 )
 
 type RidesService struct {
