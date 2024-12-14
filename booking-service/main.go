@@ -1,13 +1,13 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/essaubaid/ride-hailing/booking-service/handlers"
 	"github.com/essaubaid/ride-hailing/booking-service/repositories"
 	"github.com/essaubaid/ride-hailing/booking-service/services"
 	"github.com/essaubaid/ride-hailing/common/db"
+	"github.com/essaubaid/ride-hailing/common/logging"
 	"github.com/essaubaid/ride-hailing/common/server"
 	"github.com/essaubaid/ride-hailing/proto/booking"
 	"github.com/essaubaid/ride-hailing/proto/rides"
@@ -16,11 +16,13 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var logger = logging.GetLogger()
+
 func main() {
 	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		logger.Fatalf("Error loading .env file")
 	}
 
 	// Create DB connection
@@ -34,14 +36,14 @@ func main() {
 
 	db, err := db.NewDatabase(dbConfig)
 	if err != nil {
-		log.Fatalf("could not connect to DB: %v", err)
+		logger.Fatalf("could not connect to DB: %v", err)
 	}
 	defer db.Close()
 
 	// Connect to RideService.
 	rideConn, err := grpc.NewClient("ride_service:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("Failed to connect to RideService: %v", err)
+		logger.Fatalf("Failed to connect to RideService: %v", err)
 	}
 	defer rideConn.Close()
 	rideClient := rides.NewRidesServiceClient(rideConn)

@@ -2,13 +2,15 @@ package services
 
 import (
 	"context"
-	"log"
 
 	"github.com/essaubaid/ride-hailing/booking-service/handlers"
+	"github.com/essaubaid/ride-hailing/common/logging"
 	"github.com/essaubaid/ride-hailing/common/models"
 	"github.com/essaubaid/ride-hailing/proto/booking"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+var logger = logging.GetLogger()
 
 type BookingService struct {
 	booking.UnimplementedBookingServiceServer
@@ -22,7 +24,7 @@ func NewBookingService(handler handlers.BookingHandler) *BookingService {
 }
 
 func (s *BookingService) GetBooking(ctx context.Context, req *booking.GetBookingRequest) (*booking.GetBookingResponse, error) {
-	log.Printf("gRPC: Received GetBooking request for Booking ID: %d", req.Id)
+	logger.Infof("gRPC: Received GetBooking request for Booking ID: %d", req.Id)
 
 	bookingDetails, err := s.handler.GetBooking(ctx, req.Id)
 	if err != nil {
@@ -40,7 +42,7 @@ func (s *BookingService) GetBooking(ctx context.Context, req *booking.GetBooking
 }
 
 func (s *BookingService) CreateBooking(ctx context.Context, req *booking.CreateBookingRequest) (*booking.CreateBookingResponse, error) {
-	log.Printf("gRPC: Received CreateBooking request for User ID: %d", req.UserId)
+	logger.Infof("gRPC: Received CreateBooking request for User ID: %d", req.UserId)
 
 	ride := models.Ride{
 		Source:      req.Ride.Source,
