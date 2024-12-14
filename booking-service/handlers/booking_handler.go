@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/essaubaid/ride-hailing/booking-service/repositories"
+	"github.com/essaubaid/ride-hailing/booking-service/responses"
 	"github.com/essaubaid/ride-hailing/common/models"
 	"github.com/essaubaid/ride-hailing/proto/rides"
 )
@@ -21,20 +22,14 @@ func NewBookingHandler(repo *repositories.BookingRepository, rideClient *rides.R
 	}
 }
 
-func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*models.Booking, *models.Ride, error) {
+func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*responses.BookingDetails, error) {
 
-	return &models.Booking{
-			Id:     1,
-			UserId: 1,
-			RideId: 1,
-			Time:   time.Now(),
-		}, &models.Ride{
-			Id:          1,
-			Source:      "Source",
-			Destination: "Destination",
-			Distance:    10,
-			Cost:        100,
-		}, nil
+	bookingDetails, err := h.repo.GetBooking(bookingId)
+	if err != nil {
+		return nil, err
+	}
+
+	return bookingDetails, nil
 }
 
 func (h *BookingHandler) CreateBooking(ctx context.Context, userId int32, ride models.Ride) (*models.Booking, error) {

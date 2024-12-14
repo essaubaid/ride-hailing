@@ -24,18 +24,18 @@ func NewBookingService(handler handlers.BookingHandler) *BookingService {
 func (s *BookingService) GetBooking(ctx context.Context, req *booking.GetBookingRequest) (*booking.GetBookingResponse, error) {
 	log.Printf("gRPC: Received GetBooking request for Booking ID: %d", req.Id)
 
-	bookingData, rideData, err := s.handler.GetBooking(ctx, req.Id)
+	bookingDetails, err := s.handler.GetBooking(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	return &booking.GetBookingResponse{
-		Name:        "User Name",
-		Source:      rideData.Source,
-		Destination: rideData.Destination,
-		Distance:    rideData.Distance,
-		Cost:        rideData.Cost,
-		Time:        timestamppb.New(bookingData.Time),
+		Name:        bookingDetails.Name,
+		Source:      bookingDetails.Source,
+		Destination: bookingDetails.Destination,
+		Distance:    bookingDetails.Distance,
+		Cost:        bookingDetails.Cost,
+		Time:        timestamppb.New(bookingDetails.Time),
 	}, nil
 }
 
