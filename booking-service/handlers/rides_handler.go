@@ -26,3 +26,13 @@ func (h *RidesHandler) UpdateRide(ctx context.Context, ride *models.Ride) (*mode
 
 	return ride, nil
 }
+
+func (h *RidesHandler) CreateRide(ctx context.Context, ride *models.Ride) (*models.Ride, error) {
+
+	err := h.repo.CreateRide(ride)
+	if err != nil {
+		return nil, err
+	}
+
+	return ride, nil
+}

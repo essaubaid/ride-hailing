@@ -40,3 +40,23 @@ func (s *RidesService) UpdateRide(ctx context.Context, req *rides.UpdateRideRequ
 		Message: "Ride updated successfully",
 	}, nil
 }
+
+func (s *RidesService) CreateRide(ctx context.Context, req *rides.CreateRideRequest) (*rides.CreateRideResponse, error) {
+	log.Printf("gRPC: Received CreateRide request for Source: %s, Destination: %s", req.Ride.Source, req.Ride.Destination)
+
+	ride := models.Ride{
+		Source:      req.Ride.Source,
+		Destination: req.Ride.Destination,
+		Distance:    req.Ride.Distance,
+		Cost:        req.Ride.Cost,
+	}
+
+	_, err := s.handler.CreateRide(ctx, &ride)
+	if err != nil {
+		return nil, err
+	}
+
+	return &rides.CreateRideResponse{
+		Message: "Ride created successfully",
+	}, nil
+}

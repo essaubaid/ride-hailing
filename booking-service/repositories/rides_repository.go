@@ -25,3 +25,14 @@ func (r *RidesRepository) UpdateRideById(id int32, ride *models.Ride) error {
 
 	return err
 }
+
+func (r *RidesRepository) CreateRide(ride *models.Ride) error {
+	_, err := r.db.Exec("INSERT INTO rides (source, destination, distance, cost) VALUES ($1, $2, $3, $4)",
+		ride.Source,
+		ride.Destination,
+		ride.Distance,
+		ride.Cost,
+	)
+
+	return err
+}
