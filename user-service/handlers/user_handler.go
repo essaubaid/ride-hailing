@@ -1,36 +1,48 @@
 package handlers
 
-import "context"
+import (
+	"context"
 
-type User struct {
-	Id   int32
-	Name string
-}
+	"github.com/essaubaid/ride-hailing/common/models"
+	"github.com/essaubaid/ride-hailing/user-service/repositories"
+)
 
 type UserHandler struct {
+	repo *repositories.UserRepository
 }
 
-func NewUserHandler() *UserHandler {
-	return &UserHandler{}
+func NewUserHandler(repo *repositories.UserRepository) *UserHandler {
+	return &UserHandler{
+		repo: repo,
+	}
 }
 
-func (h *UserHandler) GetUser(ctx context.Context, userId int32) (*User, error) {
+func (h *UserHandler) GetUser(ctx context.Context, userId int32) (*models.User, error) {
 
-	return &User{
-		Id:   userId,
-		Name: "John Doe",
-	}, nil
+	user, err := h.repo.GetUserByID(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
-func (h *UserHandler) CreateUser(ctx context.Context, name string) (*User, error) {
+func (h *UserHandler) CreateUser(ctx context.Context, name string) (*models.User, error) {
 
-	return &User{
-		Id:   1,
-		Name: name,
-	}, nil
+	user := models.User{Name: name}
+	_, err := h.repo.CreateUser(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (h *UserHandler) DeleteUser(ctx context.Context, userId int32) error {
+
+	if err := h.repo.DeleteUser(userId); err != nil {
+		return err
+	}
 
 	return nil
 }
