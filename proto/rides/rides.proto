@@ -3,7 +3,8 @@ syntax = "proto3";
 option go_package = "github.com/essaubaid/ride-hailing/proto/rides";
 
 service RidesService {
-  rpc UpdateRide (UpdateRideRequest) returns (UpdateRideResponse);
+    rpc CreateRide (CreateRideRequest) returns (CreateRideResponse);
+    rpc UpdateRide (UpdateRideRequest) returns (UpdateRideResponse);
 }
 
 message RideDetails {
@@ -19,5 +20,13 @@ message UpdateRideRequest {
 }
 
 message UpdateRideResponse {
+    string message = 1;
+}
+
+message CreateRideRequest {
+    RideDetails ride = 1;
+}
+
+message CreateRideResponse {
     string message = 1;
 }
