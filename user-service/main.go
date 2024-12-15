@@ -44,8 +44,8 @@ func main() {
 	grpcConfig := server.GRPCServerConfig{Port: os.Getenv("SERVICE_PORT")}
 	grpcServer, listener := server.NewGRPCServer(&grpcConfig)
 
-	handler := handlers.NewUserHandler(userRepository)
-	UserService := services.NewUserService(*handler)
+	handler := handlers.NewUserHandlerImpl(userRepository)
+	UserService := services.NewUserService(handler)
 
 	// Register the user service with the gRPC server
 	user.RegisterUserServiceServer(grpcServer, UserService)
