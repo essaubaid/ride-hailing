@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/essaubaid/ride-hailing/common/db"
+	"github.com/essaubaid/ride-hailing/common/logging"
 	"github.com/essaubaid/ride-hailing/common/server"
 	"github.com/essaubaid/ride-hailing/proto/user"
 	"github.com/essaubaid/ride-hailing/user-service/handlers"
@@ -13,11 +13,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var logger = logging.GetLogger()
+
 func main() {
 	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		logger.Debug("Error loading .env file")
 	}
 
 	// Create DB connection
@@ -31,7 +33,7 @@ func main() {
 
 	db, err := db.NewDatabase(dbConfig)
 	if err != nil {
-		log.Fatalf("could not connect to DB: %v", err)
+		logger.Fatalf("could not connect to DB: %v", err)
 	}
 	defer db.Close()
 
