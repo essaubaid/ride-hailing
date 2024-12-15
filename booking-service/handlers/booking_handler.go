@@ -2,23 +2,27 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/essaubaid/ride-hailing/booking-service/repositories"
 	"github.com/essaubaid/ride-hailing/booking-service/responses"
 	"github.com/essaubaid/ride-hailing/common/models"
 	"github.com/essaubaid/ride-hailing/proto/rides"
+	"github.com/essaubaid/ride-hailing/proto/user"
 )
 
 type BookingHandler struct {
 	repo       *repositories.BookingRepository
 	rideClient *rides.RidesServiceClient
+	userClient *user.UserServiceClient
 }
 
-func NewBookingHandler(repo *repositories.BookingRepository, rideClient *rides.RidesServiceClient) *BookingHandler {
+func NewBookingHandler(repo *repositories.BookingRepository, rideClient *rides.RidesServiceClient, userClient *user.UserServiceClient) *BookingHandler {
 	return &BookingHandler{
 		repo:       repo,
 		rideClient: rideClient,
+		userClient: userClient,
 	}
 }
 
@@ -33,6 +37,12 @@ func (h *BookingHandler) GetBooking(ctx context.Context, bookingId int32) (*resp
 }
 
 func (h *BookingHandler) CreateBooking(ctx context.Context, userId int32, ride models.Ride) (*models.Booking, error) {
+
+	// Check if user exists
+	_, err := (*h.userClient).GetUser(ctx, &user.GetUserRequest{Id: userId})
+	if err != nil {
+		return nil, errors.New("user does not exist")
+	}
 
 	rideReq := &rides.CreateRideRequest{
 		Ride: &rides.RideDetails{

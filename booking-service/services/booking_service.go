@@ -28,6 +28,7 @@ func (s *BookingService) GetBooking(ctx context.Context, req *booking.GetBooking
 
 	bookingDetails, err := s.handler.GetBooking(ctx, req.Id)
 	if err != nil {
+		logger.Errorf("gRPC: Error getting booking details: %v", err)
 		return nil, err
 	}
 
@@ -52,6 +53,7 @@ func (s *BookingService) CreateBooking(ctx context.Context, req *booking.CreateB
 	}
 	bookingData, err := s.handler.CreateBooking(ctx, req.UserId, ride)
 	if err != nil {
+		logger.Errorf("gRPC: Error creating booking: %v", err)
 		return nil, err
 	}
 
